@@ -10,15 +10,16 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/JasonLin1230/emmmm.git"
+    "url": "git+https://github.com/JasonLin1230/node-vue-app.git"
   },
   "author": "JasonLin",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/JasonLin1230/emmmm/issues"
+    "url": "https://github.com/JasonLin1230/node-vue-app/issues"
   },
-  "homepage": "https://github.com/JasonLin1230/emmmm#readme",
+  "homepage": "https://github.com/JasonLin1230/node-vue-app#readme",
   "dependencies": {
-    "express": "^4.16.4"
+    "express": "^4.16.4",
+    "mongoose": "^5.4.20"
   }
 }
