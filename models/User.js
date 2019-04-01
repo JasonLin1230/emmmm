@@ -1,4 +1,4 @@
-const mongoose=require("mogoose");
+const mongoose=require("mongoose");
 const Schema=mongoose.Schema;
 
 const UserSchema=new Schema({
@@ -19,8 +19,8 @@ const UserSchema=new Schema({
     },
     date:{
         type:String,
-        default:Data.now
+        default:Date.now
     },
 })
 
-module.exports=User=mongoose.model("users",UserSchema);
+module.exports = User = mongoose.model('users', UserSchema);
