@@ -7,7 +7,7 @@ const users = require("./routes/api/users");
 const db = require("./config/keys").mongoURI;
 
 // 使用app-parser中间件
-app.use(bodyParser.urlencoded({extend:false}));
+app.use(bodyParser.urlencoded({extended:false}));
 app.use(bodyParser.json());
 
 mongoose.connect(db,{ useNewUrlParser: true })
