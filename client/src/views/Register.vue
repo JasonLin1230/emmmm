@@ -4,19 +4,32 @@
             <div class="manage_tip">
                 <span class="title">后台管理系统</span>
             </div>
-            <el-form :model="ruleForm2" status-icon :rules="rules2" ref="ruleForm2" label-width="100px" class="demo-ruleForm">
+            <el-form :model="registerForm" status-icon :rules="rules" ref="registerForm" label-width="100px" class="registerForm">
+              <el-form-item label="用户名" prop="name">
+                <el-input type="text" v-model="registerForm.name" autocomplete="off" required="required" placeholder="请输入用户名"></el-input>
+              </el-form-item>
+              <el-form-item label="邮箱" prop="email">
+                <el-input type="email" v-model="registerForm.email" autocomplete="off" required="required" placeholder="请输入邮箱"></el-input>
+              </el-form-item>
               <el-form-item label="密码" prop="pass">
-                <el-input type="password" v-model="ruleForm2.pass" autocomplete="off"></el-input>
+                <el-input type="password" v-model="registerForm.pass" autocomplete="off" required="required" placeholder="请输入密码"></el-input>
               </el-form-item>
               <el-form-item label="确认密码" prop="checkPass">
-                <el-input type="password" v-model="ruleForm2.checkPass" autocomplete="off"></el-input>
+                <el-input type="password" v-model="registerForm.checkPass" autocomplete="off" required="required" placeholder="请确认密码"></el-input>
               </el-form-item>
-              <el-form-item label="年龄" prop="age">
-                <el-input v-model.number="ruleForm2.age"></el-input>
+              <el-form-item label="身份" prop="identity">
+                <el-select v-model="registerForm.identity" placeholder="请选择身份">
+                  <el-option
+                    v-for="item in options"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value">
+                  </el-option>
+                </el-select>
               </el-form-item>
               <el-form-item>
-                <el-button type="primary" @click="submitForm('ruleForm2')">提交</el-button>
-                <el-button @click="resetForm('ruleForm2')">重置</el-button>
+                <el-button type="primary" @click="submitForm('registerForm')">注册</el-button>
+                <el-button @click="resetForm('registerForm')">重置</el-button>
               </el-form-item>
             </el-form>
         </section>
@@ -27,56 +40,48 @@ export default {
     name:"register",
     components:{},
     data() {
-      var checkAge = (rule, value, callback) => {
-        if (!value) {
-          return callback(new Error('年龄不能为空'));
-        }
-        setTimeout(() => {
-          if (!Number.isInteger(value)) {
-            callback(new Error('请输入数字值'));
-          } else {
-            if (value < 18) {
-              callback(new Error('必须年满18岁'));
-            } else {
-              callback();
-            }
-          }
-        }, 1000);
-      };
       var validatePass = (rule, value, callback) => {
-        if (value === '') {
-          callback(new Error('请输入密码'));
-        } else {
-          if (this.ruleForm2.checkPass !== '') {
-            this.$refs.ruleForm2.validateField('checkPass');
-          }
-          callback();
-        }
-      };
-      var validatePass2 = (rule, value, callback) => {
-        if (value === '') {
-          callback(new Error('请再次输入密码'));
-        } else if (value !== this.ruleForm2.pass) {
+        if (value !== this.registerForm.pass) {
           callback(new Error('两次输入密码不一致!'));
         } else {
           callback();
         }
       };
       return {
-        ruleForm2: {
+        options: [{
+          value: 'user',
+          label: '用户'
+        }, {
+          value: 'admin',
+          label: '管理员'
+        }],
+        value: '',
+        registerForm: {
+          name:'',
+          email:'',
           pass: '',
           checkPass: '',
-          age: ''
+          identity:''
         },
-        rules2: {
+        rules: {
+          name:[
+            {required:'true',message:'用户名不能为空',trigger:'blur'},
+            {min:2,max:20,message:'用户名长度应为2~20个字符',trigger:'blur'}
+          ],
+          email:[
+            {required:'true',message:'邮箱不能为空',trigger:'blur'},
+            {type:'email',message:'格式不正确',trigger:'blur'}
+          ],
           pass: [
-            { validator: validatePass, trigger: 'blur' }
+            {required:'true',message:'密码不能为空',trigger:'blur'},
+            {min:6,max:20,message:'密码长度应为6~20个字符',trigger:'blur'}
           ],
           checkPass: [
-            { validator: validatePass2, trigger: 'blur' }
+            {required:'true',message:'确认密码不能为空',trigger:'blur'},
+            { validator: validatePass, trigger: 'blur' }
           ],
-          age: [
-            { validator: checkAge, trigger: 'blur' }
+          identity: [
+            {required:'true',message:'身份不能为空',trigger:'blur'}
           ]
         }
       };
