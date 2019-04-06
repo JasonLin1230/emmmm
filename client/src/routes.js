@@ -2,6 +2,7 @@ import Vue from 'vue'
 import VueRouter from "vue-router"
 import Register from "./views/Register"
 import Login from "./views/Login"
+import Index from "./views/Index"
 import NotFound from "./views/404"
 
 
@@ -14,6 +15,9 @@ const routes=[
     },
     {
         path:"/login",name:"login",component:Login
+    },
+    {
+        path:"/index",name:"index",component:Index
     }
 ];
 

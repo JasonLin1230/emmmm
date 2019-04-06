@@ -4,21 +4,21 @@
             <div class="manage_tip">
                 <span class="title">后台管理系统</span>
             </div>
-            <el-form :model="registerForm" status-icon :rules="rules" ref="registerForm" label-width="100px" class="registerForm">
+            <el-form :model="registerUser" :rules="rules" ref="registerForm" label-width="100px" class="registerForm">
               <el-form-item label="用户名" prop="name">
-                <el-input type="text" v-model="registerForm.name" autocomplete="off" required="required" placeholder="请输入用户名"></el-input>
+                <el-input type="text" v-model="registerUser.name" autocomplete="off" required="required" placeholder="请输入用户名"></el-input>
               </el-form-item>
               <el-form-item label="邮箱" prop="email">
-                <el-input type="email" v-model="registerForm.email" autocomplete="off" required="required" placeholder="请输入邮箱"></el-input>
+                <el-input type="email" v-model="registerUser.email" autocomplete="off" required="required" placeholder="请输入邮箱"></el-input>
               </el-form-item>
-              <el-form-item label="密码" prop="pass">
-                <el-input type="password" v-model="registerForm.pass" autocomplete="off" required="required" placeholder="请输入密码"></el-input>
+              <el-form-item label="密码" prop="password">
+                <el-input type="password" v-model="registerUser.password" autocomplete="off" required="required" placeholder="请输入密码"></el-input>
               </el-form-item>
-              <el-form-item label="确认密码" prop="checkPass">
-                <el-input type="password" v-model="registerForm.checkPass" autocomplete="off" required="required" placeholder="请确认密码"></el-input>
+              <el-form-item label="确认密码" prop="password2">
+                <el-input type="password" v-model="registerUser.password2" autocomplete="off" required="required" placeholder="请确认密码"></el-input>
               </el-form-item>
               <el-form-item label="身份" prop="identity">
-                <el-select v-model="registerForm.identity" placeholder="请选择身份">
+                <el-select v-model="registerUser.identity" placeholder="请选择身份">
                   <el-option
                     v-for="item in options"
                     :key="item.value"
@@ -31,6 +31,9 @@
                 <el-button type="primary" @click="submitForm('registerForm')">注册</el-button>
                 <el-button @click="resetForm('registerForm')">重置</el-button>
               </el-form-item>
+              <div class="backLogin">
+                <router-link to="/login" tag="a">返回登录</router-link>
+              </div>
             </el-form>
         </section>
     </div>
@@ -41,13 +44,20 @@ export default {
     components:{},
     data() {
       var validatePass = (rule, value, callback) => {
-        if (value !== this.registerForm.pass) {
+        if (value !== this.registerUser.password) {
           callback(new Error('两次输入密码不一致!'));
         } else {
           callback();
         }
       };
       return {
+        registerUser: {
+          name:'',
+          email:'',
+          password: '',
+          password2: '',
+          identity:''
+        },
         options: [{
           value: 'user',
           label: '用户'
@@ -56,13 +66,6 @@ export default {
           label: '管理员'
         }],
         value: '',
-        registerForm: {
-          name:'',
-          email:'',
-          pass: '',
-          checkPass: '',
-          identity:''
-        },
         rules: {
           name:[
             {required:'true',message:'用户名不能为空',trigger:'blur'},
@@ -72,11 +75,11 @@ export default {
             {required:'true',message:'邮箱不能为空',trigger:'blur'},
             {type:'email',message:'格式不正确',trigger:'blur'}
           ],
-          pass: [
+          password: [
             {required:'true',message:'密码不能为空',trigger:'blur'},
             {min:6,max:20,message:'密码长度应为6~20个字符',trigger:'blur'}
           ],
-          checkPass: [
+          password2: [
             {required:'true',message:'确认密码不能为空',trigger:'blur'},
             { validator: validatePass, trigger: 'blur' }
           ],
@@ -90,7 +93,16 @@ export default {
       submitForm(formName) {
         this.$refs[formName].validate((valid) => {
           if (valid) {
-            alert('submit!');
+            this.$axios.post("/api/users/register",this.registerUser)
+                       .then(res => {
+                        if(res){
+                          this.$message({
+                            message:"注册成功!",
+                            type:"success"
+                          })
+                          this.$router.push("/login");
+                         }
+                       })
           } else {
             alert('error submit!!');
             return false;
@@ -138,5 +150,10 @@ export default {
 
 .submit_btn {
   width: 100%;
+}
+.backLogin{
+  text-align: right;
+  font-size: 12px;
+  color: #000;
 }
 </style>
