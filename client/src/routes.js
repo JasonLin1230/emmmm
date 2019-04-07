@@ -4,6 +4,7 @@ import Register from "./views/Register"
 import Login from "./views/Login"
 import Index from "./views/Index"
 import NotFound from "./views/404"
+import { Message } from "element-ui";
 
 
 const routes=[
@@ -35,5 +36,21 @@ const router=new VueRouter({
       }
     }
 });
+router.beforeEach((to,from,next) => {
+  const isLogin = (localStorage.getItem("eleToken") ? true : false);
+  if(to.path == '/login' || to.path == '/regitser'){
+    next();
+  }else{
+    if(isLogin){
+      next();
+    }else{
+      next('/login');
+      Message({
+        message:"您尚未登陆，请先登录",
+        type:"warning"
+      });
+    }
+  }
+})
 
 export default router;

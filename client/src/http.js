@@ -16,6 +16,10 @@ function endLoading(){
 // 请求拦截
 axios.interceptors.request.use(config => {
         startLoading();
+        // token过期
+        if(localStorage.getItem("eleToken")){
+            config.headers.Authorization = localStorage.getItem("eleToken");//设置请求头
+        }
         return config;
     }, error => {
         // 对请求错误做些什么
@@ -30,6 +34,14 @@ axios.interceptors.response.use(response => {
     }, error => {
         endLoading();
         Message(error.response.data);
+
+        // 获取状态码，判断是否是401unAuthorization，token过期
+        const { status } = error.response;
+        if(status == 401){
+            Message.error("状态失效，请重新登陆");
+            localStorage.removeItem("eleToken");
+            this.$router.push("/login");
+        }
         return Promise.reject(error);
     })
 

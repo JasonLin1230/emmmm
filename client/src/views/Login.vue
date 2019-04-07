@@ -4,12 +4,12 @@
             <div class="manage_tip">
                 <span class="title">后台管理系统</span>
             </div>
-            <el-form :model="loginForm" status-icon :rules="rules" ref="loginForm" label-width="100px" class="loginForm">
+            <el-form :model="loginUser" :rules="rules" ref="loginForm" label-width="100px" class="loginForm">
               <el-form-item label="邮箱" prop="email">
-                <el-input type="email" v-model="loginForm.email" autocomplete="off" required="required" placeholder="请输入邮箱"></el-input>
+                <el-input type="email" v-model="loginUser.email" autocomplete="off" required="required" placeholder="请输入邮箱"></el-input>
               </el-form-item>
-              <el-form-item label="密码" prop="pass">
-                <el-input type="password" v-model="loginForm.pass" autocomplete="off" required="required" placeholder="请输入密码"></el-input>
+              <el-form-item label="密码" prop="password">
+                <el-input type="password" v-model="loginUser.password" autocomplete="off" required="required" placeholder="请输入密码"></el-input>
               </el-form-item>
               <el-form-item>
                 <el-button type="primary" @click="submitForm('loginForm')">登录</el-button>
@@ -28,9 +28,9 @@ export default {
     components:{},
     data() {
       return {
-        loginForm: {
+        loginUser: {
           email:'',
-          pass: ''
+          password: ''
         },
         rules: {
           email:[
@@ -48,10 +48,13 @@ export default {
       submitForm(formName) {
         this.$refs[formName].validate((valid) => {
           if (valid) {
-            this.$axios.post("/api/users/login".this.loginForm)
+            this.$axios.post("/api/users/login",this.loginUser)
                        .then(res => {
                            if(res){
-                            //token
+                            // token解构
+                            const { token } = res.data;
+                            // 使用localStorage存储
+                            localStorage.setItem("eleToken",token);
                             this.$router.push("/index");
                            }
                        })
