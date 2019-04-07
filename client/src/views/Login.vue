@@ -23,6 +23,7 @@
     </div>
 </template>
 <script>
+import jwt_decode from "jwt-decode";
 export default {
     name:"register",
     components:{},
@@ -55,6 +56,13 @@ export default {
                             const { token } = res.data;
                             // 使用localStorage存储
                             localStorage.setItem("eleToken",token);
+
+                            // 解析token
+                            const decoded_token= jwt_decode(token);
+                            // 存储到vuex
+                            this.$store.dispatch("setAuthenticated",!this.isEmpty(decoded_token));
+                            this.$store.dispatch("setUser",decoded_token);
+
                             this.$router.push("/index");
                            }
                        })
@@ -63,6 +71,14 @@ export default {
             return false;
           }
         });
+      },
+      isEmpty(value) {
+        return (
+          value === undefined ||
+          value === null ||
+          (typeof value === "object" && Object.keys(value).length === 0) ||
+          (typeof value === "string" && value.trim().length === 0)
+        );
       },
       resetForm(formName) {
         this.$refs[formName].resetFields();
