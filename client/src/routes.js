@@ -4,6 +4,8 @@ import Register from "./views/Register"
 import Login from "./views/Login"
 import Index from "./views/Index"
 import NotFound from "./views/404"
+import Home from "./views/Home"
+import Info from "./views/Info"
 import { Message } from "element-ui";
 
 
@@ -12,13 +14,23 @@ const routes=[
         path:'*',name:"404",component:NotFound
     },
     {
+        path:'/',name:"index",component:Index
+    },
+    {
         path:'/register',name:"register",component:Register
     },
     {
         path:"/login",name:"login",component:Login
     },
     {
-        path:"/index",name:"index",component:Index
+        path:"/index",name:"index",component:Index,children:[
+        {
+          path:"",component:Home
+        },{
+          path:"/home",name:"home",component:Home
+        },{
+          path:"/info",name:"info",component:Info
+        }]
     }
 ];
 
