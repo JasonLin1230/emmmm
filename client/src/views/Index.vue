@@ -6,7 +6,7 @@
         <left-menu>
 
         </left-menu>
-        <router-view class="index-container">
+        <router-view class="rightContainer">
 
         </router-view>
     </div>
@@ -28,10 +28,10 @@ export default {
     height: 100%;
     overflow: hidden;
 }
-.index-container{
-    position: absolute;
+.rightContainer{
+    position: relative;
+    top: 0;
     left: 180px;
-    top: 59px;
     width: calc(100% - 180px);
     height: calc(100% - 71px);
     overflow: auto;

@@ -6,6 +6,7 @@ import Index from "./views/Index"
 import NotFound from "./views/404"
 import Home from "./views/Home"
 import Info from "./views/Info"
+import FundList from "./views/FundList"
 import { Message } from "element-ui";
 
 
@@ -30,6 +31,8 @@ const routes=[
           path:"/home",name:"home",component:Home
         },{
           path:"/info",name:"info",component:Info
+        },{
+          path:"/fundList",name:"fundList",component:FundList
         }]
     }
 ];
