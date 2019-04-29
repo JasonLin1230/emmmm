@@ -15,7 +15,7 @@ const routes=[
         path:'*',name:"404",component:NotFound
     },
     {
-        path:'/',name:"index",component:Index
+        path:'/',component:Index
     },
     {
         path:'/register',name:"register",component:Register
