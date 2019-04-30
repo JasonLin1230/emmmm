@@ -1,9 +1,9 @@
 <template>
-    <el-dialog title="添加资金信息"
+    <el-dialog 
+        :title="dialog.title"
         :visible.sync="dialog.show"
-        close-on-click-modal=true
-        modal-append-to-body=false>
-        <el-form :model="form" :rules="rules">
+        :modal-append-to-body="false">
+        <el-form :model="form" :rules="rules" ref="form">
             <el-form-item label="活动区域" :label-width="formLabelWidth">
                 <el-select v-model="form.type" placeholder="请选择类型">
                     <el-option v-for="(formType,index) in format_type_list" :key="index" :label="formType" :value="formType"></el-option>
@@ -27,27 +27,28 @@
         </el-form>
         <div slot="footer" class="dialog-footer">
             <el-button @click="dialog.show = false">取 消</el-button>
-            <el-button type="primary" @click="submitForm('form')">确 定</el-button>
+            <el-button type="primary" @click="onSubmit('form')">确 定</el-button>
         </div>
     </el-dialog>
 </template>
 <script>
 export default {
-    name:"dialog",
+    name:"dialogForm",
     props:{
-        dialog:Object
+        dialog:Object,
+        form:Object
     },
     data(){
         return{
-            form: {
-                type: '',
-                income: '',
-                expend: '',
-                description: '',
-                remark: '',
-                cash: '',
-                id: ''
-            },
+            // form: {
+            //     type: '',
+            //     income: '',
+            //     expend: '',
+            //     description: '',
+            //     remark: '',
+            //     cash: '',
+            //     id: ''
+            // },
             format_type_list:[
                 "提现","充值","转账","优惠券"
             ],
@@ -71,19 +72,20 @@ export default {
             }
         }
     },
-    method:{
-        submitForm(formName) {
+    methods:{
+        onSubmit(formName) {
         this.$refs[formName].validate((valid) => {
           if (valid) {
-            this.$axios.post("/api/profiles/add",this.form)
+            const url=this.dialog.option=="add"?"add":`edit/${this.form.id}`;
+            this.$axios.post(`/api/profiles/${url}`,this.form)
                        .then(res => {
                         if(res){
                           this.$message({
-                            message:"添加成功!",
+                            message:"操作成功!",
                             type:"success"
                           })
                           this.dialog.show=false;
-                          this.emit("update");
+                          this.$emit("update");
                          }
                        })
           } else {

@@ -93,24 +93,35 @@
                 </el-table-column>
             </el-table>
         </div>
-        <my-dialog :dialog="dialog" @update="getProfile()"></my-dialog>
+        <my-dialog :dialog="dialog" :form="form" @update="getProfile()"></my-dialog>
     </div>
 </template>
 
 <script>
-import dialog from "../components/Dialog"
+import dialogForm from "../components/Dialog"
 export default {
     name:"foudList",
     data(){
         return {
             tableData:[],
             dialog:{
-                show:false
-            }
+                show:false,
+                title:"编辑信息",
+                option:"edit"
+            },
+            form: {
+                type: "",
+                description: "",
+                income: "",
+                expend: "",
+                cash: "",
+                remark: "",
+                id: ""
+            },
         }
     },
     components:{
-        "myDialog":dialog
+        "myDialog":dialogForm
     },
     created(){
         this.getProfile();
@@ -124,15 +135,43 @@ export default {
             })
         },
         handleAdd(){
-            this.dialog.show = true;
+            this.form = {
+                type: "",
+                description: "",
+                income: "",
+                expend: "",
+                cash: "",
+                remark: "",
+                id: ""
+            },
+            this.dialog = {
+                show:true,
+                title:"添加信息",
+                option:"add"
+            }
         },
         handleEdit(index,row){
-            alert(index,row);
+            // alert(index,row);
+            this.form={
+                type:row.type,
+                description: row.description,
+                income: row.income,
+                expend: row.expend,
+                cash: row.cash,
+                remark: row.remark,
+                id: row._id
+            }
+            this.dialog = {
+                show:true,
+                title:"编辑信息",
+                option:"edit"
+            }
         },
         handleDelete(index,row){
-            // alert(index,row);
-            this.$axios.delete("/api/profiles/delete/"+row._id).then(res => {
-                this.tableData=res.data;
+            // eslint-disable-next-line
+            this.$axios.delete(`/api/profiles/delete/${row._id}`).then(res => {
+                this.$message("删除成功");
+                this.getProfile();
             }).catch(err => {
                 alert(err);
             })

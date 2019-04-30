@@ -74,11 +74,11 @@ router.post("/edit/:id",passport.authenticate("jwt",{session:false}),(req,res) =
     if(req.body.remark) profilesField.remark = req.body.remark;
     if(req.body.description) profilesField.description = req.body.description;
 
-    Profile.findOneAndUpdate({
-        _id:req.body_id,
-        $set:profilesField,
-        new:true
-    }).then(data => {
+    Profile.findOneAndUpdate(
+        {_id:req.params.id},
+        {$set:profilesField},
+        {new:true})
+        .then(data => {
         res.json(data);
     }).catch(err => {
         res.status(500).json("服务器内部错误！"+err);
@@ -89,10 +89,10 @@ router.post("/edit/:id",passport.authenticate("jwt",{session:false}),(req,res) =
 //@desc 删除信息接口
 //access private
 router.delete("/delete/:id",passport.authenticate("jwt",{session:false}),(req,res) => {
-    Profile.findOneAndDelete({_id:req.body._id})
-           .then(data => {
-               data.save().then(res => {
-                   res.json(data);
+    Profile.findOneAndDelete({_id:req.params.id})
+           .then(profile => {
+                profile.save().then(profile => {
+                   res.json(profile);
                })
            })
            .catch(err => {
