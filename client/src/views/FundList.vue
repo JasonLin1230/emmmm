@@ -1,8 +1,20 @@
 <template>
     <div class="fillContainer">
         <div>
-            <el-form :inline="true" ref="add_data">
+            <el-form :inline="true" ref="add_data" v-model="date">
+                <el-form-item label="按时间筛选：">
+                    <el-date-picker
+                        v-model="date.dateTime"
+                        type="datetimerange"
+                        range-separator="至"
+                        start-placeholder="开始日期"
+                        end-placeholder="结束日期">
+                    </el-date-picker>
+                </el-form-item>
                 <el-form-item>
+                    <el-button type="primary" size="small" icon="search" @click="handleSearch()">筛选</el-button>
+                </el-form-item>
+                <el-form-item class="right">
                     <el-button type="primary" size="small" icon="view" @click="handleAdd()">添加</el-button>
                 </el-form-item>
             </el-form>
@@ -26,7 +38,7 @@
                     sortable>
                     <template slot-scope="scope">
                         <el-icon name="time"></el-icon>
-                        <span style="margin-left: 10px">{{ scope.row.date }}</span>
+                        <span style="margin-left: 10px">{{new Date(Number(scope.row.date)).toLocaleString()}}</span>
                     </template>
                 </el-table-column>
                 <el-table-column
@@ -93,6 +105,17 @@
                 </el-table-column>
             </el-table>
         </div>
+        <div class="block right page">
+            <el-pagination
+                @size-change="handleSizeChange"
+                @current-change="handleCurrentChange"
+                :current-page.sync="pagination.current_page"
+                :page-sizes="pagination.page_sizes"
+                :page-size="pagination.page_size"
+                :layout="pagination.layout"
+                :total="pagination.total">
+            </el-pagination>
+        </div>
         <my-dialog :dialog="dialog" :form="form" @update="getProfile()"></my-dialog>
     </div>
 </template>
@@ -103,7 +126,19 @@ export default {
     name:"foudList",
     data(){
         return {
+            date:{
+                dateTime:[]
+            },
             tableData:[],
+            allTableData:[],
+            filterData:[],
+            pagination:{
+                current_page: 1,
+                page_sizes: [10, 20, 30, 50],
+                page_size: 10,
+                layout: "total, sizes, prev, pager, next, jumper",
+                total: 0
+            },
             dialog:{
                 show:false,
                 title:"编辑信息",
@@ -129,10 +164,37 @@ export default {
     methods:{
         getProfile(){
             this.$axios.get("/api/profiles").then(res => {
-                this.tableData=res.data;
+                this.allTableData=res.data;
+                this.filterData=res.data;
+                this.setPagination();
             }).catch(err => {
                 alert(err);
             })
+        },
+        setPagination(){
+            this.pagination.total = this.allTableData.length;
+            this.pagination.current_page = 1;
+            this.pagination.page_size = 10;
+            this.tableData = this.allTableData.filter((item,index) => {
+                return index < this.pagination.page_size
+            })
+        },
+        handleSearch(){
+            if(!this.date.dateTime || !this.date.dateTime.length){
+                this.$message({
+                    type:"warning",
+                    message:"请选择时间区间"
+                })
+                this.getProfile();
+                return;
+            }
+            const sTime = this.date.dateTime[0].getTime();
+            const eTime = this.date.dateTime[1].getTime();
+            this.allTableData = this.filterData.filter((item) => {
+                let time = Number(item.date);
+                return time >= sTime  && time <= eTime;
+            })
+            this.setPagination();
         },
         handleAdd(){
             this.form = {
@@ -175,18 +237,41 @@ export default {
             }).catch(err => {
                 alert(err);
             })
+        },
+        handleSizeChange(val) {
+            // console.log(`每页 ${val} 条`);
+            this.pagination.current_page = 1;
+            this.pagination.page_size = val;
+            this.tableData = this.allTableData.filter((item,index) => {
+                return index < val
+            })
+        },
+        handleCurrentChange(val) {
+            // console.log(`当前页: ${val}`);
+            let start = this.pagination.page_size * (val-1);
+            let end = this.pagination.page_size * val;
+            let tables = [];
+            for(let i=start;i<end;i++){
+                if(this.allTableData[i]){
+                    tables.push(this.allTableData[i]);
+                }
+            }
+            this.tableData = tables;
         }
     }
 }
 </script>
 <style scoped>
 .fillContainer{
-    width:100%;
+    /* width:100%; */
     height: 100%;
     padding: 16px;
     box-sizing: border-box;
 }
 .right{
     float: right;
+}
+.page{
+    margin-top: 20px;
 }
 </style>
