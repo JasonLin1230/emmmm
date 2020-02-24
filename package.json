@@ -22,7 +22,7 @@
   },
   "homepage": "https://github.com/JasonLin1230/node-vue-app#readme",
   "dependencies": {
-    "bcrypt": "^3.0.5",
+    "bcrypt": "^4.0.0",
     "body-parser": "^1.18.3",
     "concurrently": "^4.1.1",
     "express": "^4.16.4",
